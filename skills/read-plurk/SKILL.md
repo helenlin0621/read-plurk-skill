@@ -21,7 +21,7 @@ description: 讀取噗浪(Plurk)噗文與全部回應，整理重點與噗友風
 5. **大噗（超過 300 則）**：程式碼會把全部回應存在 `window.__plurk`，不要一次回傳全文（會超過輸出上限）。改用 `window.__plurk.slice(0, 500)` 這樣分段取回，每段約 500 則；分段交給子代理平行閱讀，每段回報話題走向、立場群組（約略則數＋短引）、主要留言者立場、主要交鋒、語氣，再由你合併。
 6. **有截圖／圖片時**：程式碼已把所有圖片網址放進 `window.__imgs`，並回傳 `img_list`：每張圖的編號 `i`、樓層 `floor`（0 是噗文本體）、尺寸，以及要截幾段 `parts`（1 是一頁看得完，2 以上是長圖）。圖片在 images.plurk.com，雲端抓不到，要在瀏覽器裡看：
    - **在原本的噗文分頁裡用「看圖層」顯示**（下方第二段程式碼，先執行一次），不要開新分頁或切走網址：images.plurk.com 是另一個網站，每次載入都可能跳出允許提示；而且切走網址 `window.__plurk` 會消失。
-   - **一般圖**（`parts` 為 1）：`await __show(i)` 顯示第 i 張，接著截圖。`__show` 會等畫面畫好才回傳；不要拆成兩次呼叫或省掉 await，否則截到的可能還是上一張圖。
+   - **一般圖**（`parts` 為 1）：`await __show(i)` 顯示第 i 張，接著截圖。`__show` 會等圖片解碼完、畫面畫好才回傳；不要拆成兩次呼叫或省掉 await，否則截到的可能還是上一張圖。
    - **長圖**（`parts` 大於 1，例如長串對話截圖）：`await __showTall(i)` 打開並顯示第 0 段，截圖；接著 `await __part(1)`、`await __part(2)`…只捲動不重載，每段截一次圖，直到 `parts - 1`。
    - **截圖縮放**：預設 scale 0.7；整段文字、外文或小字用 0.8，還是看不清就用 `zoom` 放大那一塊。不要猜字。
    - 看完執行 `document.getElementById('__viewer')?.remove()` 把頁面還原。
@@ -98,6 +98,8 @@ window.__show = async (i) => {
   im.style.cssText = 'max-width:100%;max-height:100vh;object-fit:contain';
   im.src = window.__imgs[i]; o.appendChild(im);
   await new Promise(r => { im.onload = r; im.onerror = r; setTimeout(r, 8000); });
+  // 大張 PNG 載入完還要解碼，沒等解碼完就截圖會幾乎全黑
+  try { await im.decode(); } catch (e) {}
   await window.__paint();
   return { i, src: im.src, w: im.naturalWidth, h: im.naturalHeight };
 };
