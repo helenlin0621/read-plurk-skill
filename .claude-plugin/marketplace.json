@@ -1,0 +1,14 @@
+{
+  "name": "read-plurk-skill",
+  "owner": {
+    "name": "read-plurk maintainers"
+  },
+  "plugins": [
+    {
+      "name": "read-plurk",
+      "source": "./",
+      "description": "讀取噗浪(Plurk)噗文與全部回應，整理重點與噗友風向。"
+    }
+  ],
+  "description": "讀噗浪的 Claude Skill：整理噗文重點與噗友風向。"
+}
