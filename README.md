@@ -43,6 +43,25 @@
 - 政治或爭議議題會以中立方式描述兩邊，不判斷誰對。
 - 本工具使用噗浪網頁本身的資料介面，噗浪改版時可能失效。
 
+## 修改 Skill 之後
+
+改完 `skills/read-plurk/SKILL.md`，發佈前要做三件事（指令以 Windows cmd.exe 為準，在 repo 根目錄執行）：
+
+1. 把 `.claude-plugin/plugin.json` 的 `version` 往上調。版本號沒變，`claude plugin update` 不會抓新內容。
+2. 重新打包給 claude.ai 上傳用的 zip：
+
+   ```
+   tar -a -cf dist\read-plurk.zip -C skills read-plurk
+   ```
+
+   Windows 內建的 `tar` 才能打成 zip；Git Bash 的 `tar` 打出來的不是 zip。
+
+3. 已經裝好的 Claude Code 要更新才會吃到新版：
+
+   ```
+   claude plugin update read-plurk@read-plurk-skill
+   ```
+
 ## 授權
 
 MIT

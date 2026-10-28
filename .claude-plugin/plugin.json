@@ -1,6 +1,6 @@
 {
   "name": "read-plurk",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "讀取噗浪(Plurk)噗文與全部回應，整理重點與噗友風向。",
   "license": "MIT"
 }
